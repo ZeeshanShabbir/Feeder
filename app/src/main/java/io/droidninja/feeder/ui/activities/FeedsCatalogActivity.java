@@ -2,8 +2,8 @@ package io.droidninja.feeder.ui.activities;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,7 +24,6 @@ import io.droidninja.feeder.api.model.CatalogDTO;
 import io.droidninja.feeder.api.model.SourceDTO;
 import io.droidninja.feeder.api.networking.FeedApi;
 import io.droidninja.feeder.contentProvider.FeederContract;
-import io.droidninja.feeder.di.FeederApplicationComponent;
 import io.droidninja.feeder.ui.adapters.CatalogAdapter;
 import io.droidninja.feeder.ui.adapters.SelectedInterfaceListener;
 import io.droidninja.feeder.util.GridSpacingItemDecoration;
@@ -66,6 +65,7 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
                     catalogAdapter.swap(response.body().getSources());
                 }
             }
+
             @Override
             public void onFailure(Call<CatalogDTO> call, Throwable t) {
                 // TODO: 2/19/17 Handle case when this will fail
@@ -118,12 +118,15 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
         ContentValues[] contentValues = new ContentValues[selectedItems.size()];
         int rowsDeleted = getContentResolver().delete(FeederContract.SourceEntry.CONTENT_URI, null, null);
         Log.d(TAG, rowsDeleted + " row has been deleted from db");
-        ContentValues value = new ContentValues();
         for (int i = 0; i < selectedItems.size(); i++) {
-            value.put(FeederContract.SourceEntry.IDENTIFIER, selectedItems.get(i).getId());
-            value.put(FeederContract.SourceEntry.NAME, selectedItems.get(i).getName());
+            ContentValues value = new ContentValues();
+            String name = selectedItems.get(i).getName();
+            String identifier = selectedItems.get(i).getId();
+            value.put(FeederContract.SourceEntry.IDENTIFIER, identifier);
+            value.put(FeederContract.SourceEntry.NAME, name);
             contentValues[i] = value;
         }
+
         int rows = getContentResolver().bulkInsert(FeederContract.SourceEntry.CONTENT_URI, contentValues);
         Log.d(TAG, rows + " rows have been added");
         startActivity(new Intent(this, MainActivity.class));
