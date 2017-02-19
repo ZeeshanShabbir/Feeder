@@ -5,7 +5,6 @@ import com.squareup.picasso.Picasso;
 import dagger.Module;
 import dagger.Provides;
 import io.droidninja.feeder.ui.adapters.CatalogAdapter;
-import io.droidninja.feeder.ui.adapters.FeedAdapter;
 import io.droidninja.feeder.ui.adapters.SelectedInterfaceListener;
 
 /**
@@ -16,13 +15,14 @@ public class FeedsCatalogActivityModule {
 
     private final SelectedInterfaceListener selectedInterfaceListener;
 
-    public FeedsCatalogActivityModule(SelectedInterfaceListener selectedInterfaceListener) {
-        this.selectedInterfaceListener = selectedInterfaceListener;
+    public FeedsCatalogActivityModule(SelectedInterfaceListener mselectedInterfaceListener) {
+        this.selectedInterfaceListener = mselectedInterfaceListener;
     }
 
     @Provides
     @FeedsCatalogActivityScope
-    public CatalogAdapter catalogAdapter(Picasso picasso, SelectedInterfaceListener mSelectesInterfaceListener) {
-        return new CatalogAdapter(picasso, mSelectesInterfaceListener);
+    public CatalogAdapter catalogAdapter(Picasso picasso) {
+        return new CatalogAdapter(picasso, selectedInterfaceListener);
     }
+
 }

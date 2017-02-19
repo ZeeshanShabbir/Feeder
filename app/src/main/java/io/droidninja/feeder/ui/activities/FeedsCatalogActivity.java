@@ -24,6 +24,7 @@ import io.droidninja.feeder.api.model.CatalogDTO;
 import io.droidninja.feeder.api.model.SourceDTO;
 import io.droidninja.feeder.api.networking.FeedApi;
 import io.droidninja.feeder.contentProvider.FeederContract;
+import io.droidninja.feeder.di.FeederApplicationComponent;
 import io.droidninja.feeder.ui.adapters.CatalogAdapter;
 import io.droidninja.feeder.ui.adapters.SelectedInterfaceListener;
 import io.droidninja.feeder.util.GridSpacingItemDecoration;
@@ -33,30 +34,29 @@ import retrofit2.Response;
 
 public class FeedsCatalogActivity extends AppCompatActivity implements SelectedInterfaceListener {
     private static final String TAG = "FeedsCatalogActivity";
-    private FeedApi feedApi;
 
     @BindView(R.id.rc_catalog)
     RecyclerView recyclerView;
+
     @BindView(R.id.btn_next)
     Button btnNext;
+
     List<SourceDTO> selectedItems = new ArrayList<SourceDTO>();
+
+    FeedsCatalogActivityComponent feedsCatalogActivityComponent;
+    CatalogAdapter catalogAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        hideStatusBar();
         setContentView(R.layout.activity_feeds_catalog);
         ButterKnife.bind(this);
-        GridLayoutManager manager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-        final CatalogAdapter catalogAdapter = new CatalogAdapter(FeederApplication.get(this).getPicasso(), this);
-        recyclerView.setAdapter(catalogAdapter);
-        feedApi = FeederApplication.get(this).getFeedApi();
-        int spanCount = 3; // 3 columns
-        int spacing = 20; // 50px
-        boolean includeEdge = true;
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+        feedsCatalogActivityComponent = DaggerFeedsCatalogActivityComponent.builder()
+                .feederApplicationComponent(FeederApplication.get(this).component())
+                .feedsCatalogActivityModule(new FeedsCatalogActivityModule(this)).build();
+        initRc();
+        FeedApi feedApi = feedsCatalogActivityComponent.getFeedApi();
         Call<CatalogDTO> catalogs = feedApi.getSources();
         catalogs.enqueue(new Callback<CatalogDTO>() {
             @Override
@@ -66,14 +66,33 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
                     catalogAdapter.swap(response.body().getSources());
                 }
             }
-
             @Override
             public void onFailure(Call<CatalogDTO> call, Throwable t) {
-
+                // TODO: 2/19/17 Handle case when this will fail
             }
         });
 
 
+    }
+
+    /**
+     * initializes the RecyclerView
+     */
+    private void initRc() {
+        GridLayoutManager manager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+        catalogAdapter = feedsCatalogActivityComponent.getCatalogAdapter();
+        recyclerView.setAdapter(catalogAdapter);
+
+        //Adding margin and padding to Grid layout
+        int spanCount = 3; // 3 columns
+        int spacing = 20; // 50px
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, true));
+    }
+
+    private void hideStatusBar() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override

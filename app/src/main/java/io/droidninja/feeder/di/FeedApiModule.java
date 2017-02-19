@@ -17,14 +17,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module(includes = NetworkModule.class)
 public class FeedApiModule {
     @Provides
+    @FeederApplicationScope
     public FeedApi feedApi(Retrofit feedRetrofit){
         return feedRetrofit.create(FeedApi.class);
     }
     @Provides
+    @FeederApplicationScope
     public Gson gson(){
         return new GsonBuilder().create();
     }
     @Provides
+    @FeederApplicationScope
     public Retrofit retrofit(Gson gson, OkHttpClient okHttpClient){
         return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))

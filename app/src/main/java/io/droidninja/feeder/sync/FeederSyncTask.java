@@ -8,6 +8,6 @@ import android.content.Context;
 
 public class FeederSyncTask {
     public static void syncArticles(Context context) {
-
+        // TODO: 2/19/17 ADD THE SYNC FUNCTIONALITY
     }
 }

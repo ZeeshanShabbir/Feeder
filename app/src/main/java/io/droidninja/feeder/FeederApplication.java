@@ -2,6 +2,7 @@ package io.droidninja.feeder;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
 
 import com.squareup.picasso.Picasso;
 
@@ -20,15 +21,21 @@ public class FeederApplication extends Application {
     private Picasso picasso;
     private FeedApi feedApi;
 
+    FeederApplicationComponent feederApplicationComponent;
+
 
     public static FeederApplication get(Activity activity) {
         return (FeederApplication) activity.getApplication();
     }
 
+    public static FeederApplication get(Service service) {
+        return (FeederApplication) service.getApplication();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        FeederApplicationComponent feederApplicationComponent = DaggerFeederApplicationComponent.builder()
+        feederApplicationComponent = DaggerFeederApplicationComponent.builder()
                 .contextModule(new ContextModule(this))
                 .build();
 
@@ -44,5 +51,9 @@ public class FeederApplication extends Application {
 
     public Picasso getPicasso() {
         return picasso;
+    }
+
+    public FeederApplicationComponent component() {
+        return feederApplicationComponent;
     }
 }

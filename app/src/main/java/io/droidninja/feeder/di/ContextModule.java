@@ -17,6 +17,7 @@ public class ContextModule {
     }
 
     @Provides
+    @FeederApplicationScope
     public Context context(){
         return context;
     }
