@@ -21,7 +21,7 @@ import retrofit2.Response;
 public class FeederSyncTask {
     private static final String TAG = "FeederSyncTask";
 
-    public static void syncArticles(final Service context) {
+    public static void syncArticles(final Service context) /*Change the Service to context*/ {
         String[] selections = {FeederContract.SourceEntry._ID, FeederContract.SourceEntry.IDENTIFIER};
 
         Cursor cursor = context.getContentResolver().query(
@@ -65,6 +65,7 @@ public class FeederSyncTask {
                             }
                             int rows = context.getContentResolver().bulkInsert(FeederContract.ArticleEntry.CONTENT_URI, values);
                             Log.d(TAG, rows + "");
+                            Log.d(TAG, data);
                         }
 
                         @Override

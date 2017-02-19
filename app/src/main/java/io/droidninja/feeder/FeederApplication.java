@@ -6,10 +6,10 @@ import android.app.Service;
 
 import com.squareup.picasso.Picasso;
 
+import io.droidninja.feeder.api.networking.FeedApi;
 import io.droidninja.feeder.di.ContextModule;
 import io.droidninja.feeder.di.DaggerFeederApplicationComponent;
 import io.droidninja.feeder.di.FeederApplicationComponent;
-import io.droidninja.feeder.api.networking.FeedApi;
 import timber.log.Timber;
 
 /**
@@ -18,11 +18,9 @@ import timber.log.Timber;
 
 public class FeederApplication extends Application {
 
+    FeederApplicationComponent feederApplicationComponent;
     private Picasso picasso;
     private FeedApi feedApi;
-
-    FeederApplicationComponent feederApplicationComponent;
-
 
     public static FeederApplication get(Activity activity) {
         return (FeederApplication) activity.getApplication();

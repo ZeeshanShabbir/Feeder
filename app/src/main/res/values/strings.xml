@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Feeder</string>
+    <string name="catalog_saved">user has selected the catalogs</string>
 </resources>

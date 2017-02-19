@@ -27,6 +27,7 @@ import io.droidninja.feeder.contentProvider.FeederContract;
 import io.droidninja.feeder.ui.adapters.CatalogAdapter;
 import io.droidninja.feeder.ui.adapters.SelectedInterfaceListener;
 import io.droidninja.feeder.util.GridSpacingItemDecoration;
+import io.droidninja.feeder.util.SharedPrefsUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -129,6 +130,7 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
 
         int rows = getContentResolver().bulkInsert(FeederContract.SourceEntry.CONTENT_URI, contentValues);
         Log.d(TAG, rows + " rows have been added");
+        SharedPrefsUtils.setBooleanPreference(this, getString(R.string.catalog_saved), true);
         startActivity(new Intent(this, MainActivity.class));
     }
 }

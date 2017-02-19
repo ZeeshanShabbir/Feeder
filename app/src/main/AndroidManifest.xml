@@ -28,6 +28,14 @@
             android:authorities="io.droidninja.feeder"
             android:exported="false" />
         <service android:name=".sync.FeederSyncIntentService" />
+
+        <service
+            android:name=".sync.FeederFirebaseJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

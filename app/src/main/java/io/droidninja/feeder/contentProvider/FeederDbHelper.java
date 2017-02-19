@@ -30,9 +30,9 @@ public class FeederDbHelper extends SQLiteOpenHelper {
                 ArticleEntry.AUTHOR + " TEXT , " +
                 ArticleEntry.TITLE + " TEXT NOT NULL, " +
                 ArticleEntry.DESCRIPTION + " TEXT NOT NULL, " +
-                ArticleEntry.PUBLISH_AT + " TEXT , " +
+                ArticleEntry.PUBLISH_AT + " TEXT, " +
                 ArticleEntry.URL + " TEXT NOT NULL, " +
-                ArticleEntry.URL_TO_IMAGE + " TEXT NOT NULL, " +
+                ArticleEntry.URL_TO_IMAGE + " TEXT, " +
                 ArticleEntry.SOURCE + " TEXT NOT NULL);";
         db.execSQL(SQL_CREATE_SOURCE_TABLE);
         db.execSQL(SQL_CREATE_ARTICLE_TABLE);
