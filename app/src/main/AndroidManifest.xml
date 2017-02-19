@@ -27,6 +27,7 @@
             android:name=".contentProvider.FeederContentProvider"
             android:authorities="io.droidninja.feeder"
             android:exported="false" />
+        <service android:name=".sync.FeederSyncIntentService" />
     </application>
 
 </manifest>

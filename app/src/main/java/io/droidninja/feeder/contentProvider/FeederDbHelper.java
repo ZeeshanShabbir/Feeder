@@ -4,8 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import io.droidninja.feeder.contentProvider.FeederContract.SourceEntry;
 import io.droidninja.feeder.contentProvider.FeederContract.ArticleEntry;
+import io.droidninja.feeder.contentProvider.FeederContract.SourceEntry;
 
 /**
  * Created by Zeeshan on 2/12/17.
@@ -13,7 +13,7 @@ import io.droidninja.feeder.contentProvider.FeederContract.ArticleEntry;
 
 public class FeederDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "weather.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public FeederDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,14 +27,13 @@ public class FeederDbHelper extends SQLiteOpenHelper {
                 SourceEntry.NAME + " TEXT);";
         final String SQL_CREATE_ARTICLE_TABLE = "CREATE TABLE " + ArticleEntry.TABLE_NAME + " (" +
                 ArticleEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ArticleEntry.AUTHOR + " TEXT NOT NULL, " +
+                ArticleEntry.AUTHOR + " TEXT , " +
                 ArticleEntry.TITLE + " TEXT NOT NULL, " +
                 ArticleEntry.DESCRIPTION + " TEXT NOT NULL, " +
-                ArticleEntry.PUBLISH_AT + "TEXT NOT NULL, " +
+                ArticleEntry.PUBLISH_AT + " TEXT , " +
                 ArticleEntry.URL + " TEXT NOT NULL, " +
                 ArticleEntry.URL_TO_IMAGE + " TEXT NOT NULL, " +
-                ArticleEntry.SOURCE + " INT NOT NULL, " +
-                " FOREIGN KEY (" + ArticleEntry.SOURCE + ") REFERENCES " + SourceEntry.NAME + "(" + SourceEntry._ID + "));";
+                ArticleEntry.SOURCE + " TEXT NOT NULL);";
         db.execSQL(SQL_CREATE_SOURCE_TABLE);
         db.execSQL(SQL_CREATE_ARTICLE_TABLE);
     }

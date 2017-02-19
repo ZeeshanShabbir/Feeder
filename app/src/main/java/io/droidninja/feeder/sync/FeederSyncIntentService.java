@@ -8,6 +8,10 @@ import android.content.Intent;
  */
 
 public class FeederSyncIntentService extends IntentService {
+    public FeederSyncIntentService() {
+        super("FeederSyncIntentService");
+    }
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *

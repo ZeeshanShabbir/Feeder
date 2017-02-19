@@ -17,23 +17,27 @@ import android.support.annotation.Nullable;
 public class FeederContentProvider extends ContentProvider {
     public static final int CODE_INSERT_SOURCE = 100;
     public static final int CODE_INSERT_SOURCE_SINGLE = 101;
+    public static final int CODE_VIEW_ARTICLE = 102;
+    public static final int CODE_INSERT_ARTICLE = 102;
     private FeederDbHelper feederDbHelper;
     private UriMatcher sUriMatcher = buildUriMatcher();
+
+    public static UriMatcher buildUriMatcher() {
+        UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+        uriMatcher.addURI(FeederContract.CONTENT_AUTHORITY, FeederContract.PATH_SOURCE, CODE_INSERT_SOURCE);
+        uriMatcher.addURI(FeederContract.CONTENT_AUTHORITY, FeederContract.PATH_ARTICLE, CODE_VIEW_ARTICLE);
+        uriMatcher.addURI(FeederContract.CONTENT_AUTHORITY, FeederContract.PATH_ARTICLE, CODE_INSERT_ARTICLE);
+        uriMatcher.addURI(FeederContract.CONTENT_AUTHORITY, FeederContract.PATH_SOURCE + "/#", CODE_INSERT_SOURCE_SINGLE);
+
+        return uriMatcher;
+    }
 
     @Override
     public boolean onCreate() {
         Context context = getContext();
         feederDbHelper = new FeederDbHelper(context);
         return true;
-    }
-
-    public static UriMatcher buildUriMatcher() {
-        UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-        uriMatcher.addURI(FeederContract.CONTENT_AUTHORITY, FeederContract.PATH_SOURCE, CODE_INSERT_SOURCE);
-        uriMatcher.addURI(FeederContract.CONTENT_AUTHORITY, FeederContract.PATH_SOURCE + "/#", CODE_INSERT_SOURCE_SINGLE);
-
-        return uriMatcher;
     }
 
     @Nullable
@@ -51,6 +55,16 @@ public class FeederContentProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case CODE_VIEW_ARTICLE:
+                cursor = feederDbHelper.getReadableDatabase().query(FeederContract.ArticleEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri " + uri);
         }
@@ -123,31 +137,47 @@ public class FeederContentProvider extends ContentProvider {
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = feederDbHelper.getWritableDatabase();
-        int rowsInserted = 0;
         int match = sUriMatcher.match(uri);
         switch (match) {
             case CODE_INSERT_SOURCE:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values) {
-                        long _id = db.insert(FeederContract.SourceEntry.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            rowsInserted++;
-                        }
-                    }
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-
-                if (rowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
                 //Return the number of rows inserted from our implementation of bulkInsert
-                return rowsInserted;
+                return insertRecords(FeederContract.SourceEntry.TABLE_NAME, db, values, uri);
+            case CODE_INSERT_ARTICLE:
+                return insertRecords(FeederContract.ArticleEntry.TABLE_NAME, db, values, uri);
             default:
                 return super.bulkInsert(uri, values);
         }
+    }
+
+    /**
+     * generic method use to insert record to any table
+     *
+     * @param tabbleName
+     * @param db
+     * @param values
+     * @param uri
+     * @return
+     */
+    public int insertRecords(String tabbleName, SQLiteDatabase db, ContentValues[] values, Uri uri) {
+        db.beginTransaction();
+        int rowsInserted = 0;
+        try {
+            for (ContentValues value : values) {
+                long _id = db.insertWithOnConflict(tabbleName, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                if (_id != -1) {
+                    rowsInserted++;
+                }
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        if (rowsInserted > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        //Return the number of rows inserted from our implementation of bulkInsert
+        return rowsInserted;
     }
 }
 

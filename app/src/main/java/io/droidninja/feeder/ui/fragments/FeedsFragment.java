@@ -1,7 +1,5 @@
 package io.droidninja.feeder.ui.fragments;
 
-import android.database.Cursor;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,7 +15,7 @@ import butterknife.ButterKnife;
 import io.droidninja.feeder.FeederApplication;
 import io.droidninja.feeder.R;
 import io.droidninja.feeder.api.model.FeedsDTO;
-import io.droidninja.feeder.contentProvider.FeederContract;
+import io.droidninja.feeder.sync.FeederSyncUtil;
 import io.droidninja.feeder.ui.adapters.FeedAdapter;
 import io.droidninja.feeder.util.Constants;
 import retrofit2.Call;
@@ -40,16 +38,7 @@ public class FeedsFragment extends Fragment {
         ButterKnife.bind(this, view);
         initRc();
         loadData();
-
-        String[] selections = {FeederContract.SourceEntry._ID, FeederContract.SourceEntry.NAME};
-
-        Cursor cursor = getActivity().getContentResolver().query(
-                FeederContract.SourceEntry.CONTENT_URI,
-                selections,
-                null,
-                null,
-                null);
-        cursor.close();
+        FeederSyncUtil.initialize(getActivity());
         return view;
     }
 
