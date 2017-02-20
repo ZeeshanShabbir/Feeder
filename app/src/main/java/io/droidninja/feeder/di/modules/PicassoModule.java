@@ -1,4 +1,4 @@
-package io.droidninja.feeder.di;
+package io.droidninja.feeder.di.modules;
 
 import android.content.Context;
 
@@ -7,6 +7,7 @@ import com.squareup.picasso.Picasso;
 
 import dagger.Module;
 import dagger.Provides;
+import io.droidninja.feeder.di.scopes.FeederApplicationScope;
 import okhttp3.OkHttpClient;
 
 /**

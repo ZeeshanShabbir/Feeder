@@ -1,4 +1,4 @@
-package io.droidninja.feeder.di;
+package io.droidninja.feeder.di.modules;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
 import io.droidninja.feeder.api.networking.FeedApi;
+import io.droidninja.feeder.di.scopes.FeederApplicationScope;
 import io.droidninja.feeder.util.Constants;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

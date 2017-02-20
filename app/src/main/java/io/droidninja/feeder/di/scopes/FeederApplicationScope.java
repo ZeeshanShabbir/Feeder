@@ -1,4 +1,4 @@
-package io.droidninja.feeder.di;
+package io.droidninja.feeder.di.scopes;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

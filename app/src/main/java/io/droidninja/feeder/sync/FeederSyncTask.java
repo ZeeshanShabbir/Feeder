@@ -1,7 +1,7 @@
 package io.droidninja.feeder.sync;
 
-import android.app.Service;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
@@ -21,7 +21,7 @@ import retrofit2.Response;
 public class FeederSyncTask {
     private static final String TAG = "FeederSyncTask";
 
-    public static void syncArticles(final Service context) /*Change the Service to context*/ {
+    public static void syncArticles(final Context context) {
         String[] selections = {FeederContract.SourceEntry._ID, FeederContract.SourceEntry.IDENTIFIER};
 
         Cursor cursor = context.getContentResolver().query(
@@ -38,7 +38,7 @@ public class FeederSyncTask {
                     Log.d(TAG, data);
                     //https://newsapi.org/v1/articles?source=techcrunch&apiKey=233f7903c53749eda5e31794a7260df0
                     String url = Constants.BASE_URL + "articles?source=" + data + "&apiKey=" + Constants.API_KEY;
-                    FeedApi feedApi = FeederApplication.get(context).getFeedApi();
+                    FeedApi feedApi = FeederApplication.getsBaseComponent().getFeedApi();
                     Call<FeedsDTO> feedsCall = feedApi.getFeeds(url);
                     feedsCall.enqueue(new Callback<FeedsDTO>() {
                         @Override

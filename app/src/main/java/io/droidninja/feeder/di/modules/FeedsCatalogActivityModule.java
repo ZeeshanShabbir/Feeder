@@ -1,9 +1,10 @@
-package io.droidninja.feeder.ui.activities;
+package io.droidninja.feeder.di.modules;
 
 import com.squareup.picasso.Picasso;
 
 import dagger.Module;
 import dagger.Provides;
+import io.droidninja.feeder.di.scopes.FeedsCatalogActivityScope;
 import io.droidninja.feeder.ui.adapters.CatalogAdapter;
 import io.droidninja.feeder.ui.adapters.SelectedInterfaceListener;
 

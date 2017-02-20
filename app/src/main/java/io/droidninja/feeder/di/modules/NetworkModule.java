@@ -1,4 +1,4 @@
-package io.droidninja.feeder.di;
+package io.droidninja.feeder.di.modules;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import java.io.File;
 
 import dagger.Module;
 import dagger.Provides;
-import io.droidninja.feeder.api.networking.FeedApi;
+import io.droidninja.feeder.di.scopes.FeederApplicationScope;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

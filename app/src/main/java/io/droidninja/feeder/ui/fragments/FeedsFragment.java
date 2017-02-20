@@ -70,7 +70,7 @@ public class FeedsFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void loadData() {
-        Call<FeedsDTO> feedsDTOCall = FeederApplication.get(getActivity()).getFeedApi().getFeeds(Constants.BASE_URL + "articles?source=techcrunch&apiKey=233f7903c53749eda5e31794a7260df0");
+        Call<FeedsDTO> feedsDTOCall = FeederApplication.getsBaseComponent().getFeedApi().getFeeds(Constants.BASE_URL + "articles?source=techcrunch&apiKey=233f7903c53749eda5e31794a7260df0");
         feedsDTOCall.enqueue(new Callback<FeedsDTO>() {
             @Override
             public void onResponse(Call<FeedsDTO> call, Response<FeedsDTO> response) {

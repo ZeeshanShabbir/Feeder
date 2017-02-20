@@ -1,15 +1,13 @@
 package io.droidninja.feeder;
 
-import android.app.Activity;
 import android.app.Application;
-import android.app.Service;
 
-import com.squareup.picasso.Picasso;
-
-import io.droidninja.feeder.api.networking.FeedApi;
-import io.droidninja.feeder.di.ContextModule;
-import io.droidninja.feeder.di.DaggerFeederApplicationComponent;
-import io.droidninja.feeder.di.FeederApplicationComponent;
+import io.droidninja.feeder.di.components.ApplicationComponent;
+import io.droidninja.feeder.di.components.BaseComponent;
+import io.droidninja.feeder.di.components.DaggerApplicationComponent;
+import io.droidninja.feeder.di.components.DaggerBaseComponent;
+import io.droidninja.feeder.di.modules.ApplicationModule;
+import io.droidninja.feeder.di.modules.ContextModule;
 import timber.log.Timber;
 
 /**
@@ -18,40 +16,30 @@ import timber.log.Timber;
 
 public class FeederApplication extends Application {
 
-    FeederApplicationComponent feederApplicationComponent;
-    private Picasso picasso;
-    private FeedApi feedApi;
+    private static BaseComponent sBaseComponent;
+    BaseComponent feederApplicationComponent;
 
-    public static FeederApplication get(Activity activity) {
-        return (FeederApplication) activity.getApplication();
-    }
-
-    public static FeederApplication get(Service service) {
-        return (FeederApplication) service.getApplication();
+    public static BaseComponent getsBaseComponent() {
+        return sBaseComponent;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        feederApplicationComponent = DaggerFeederApplicationComponent.builder()
+
+        ApplicationComponent applicationComponent = DaggerApplicationComponent
+                .builder()
+                .applicationModule(new ApplicationModule(this))
+                .build();
+        sBaseComponent = DaggerBaseComponent.builder()
+                .applicationComponent(applicationComponent)
                 .contextModule(new ContextModule(this))
                 .build();
 
-        picasso = feederApplicationComponent.getPicasso();
-        feedApi = feederApplicationComponent.getFeedApi();
         Timber.plant(new Timber.DebugTree());
     }
 
-
-    public FeedApi getFeedApi() {
-        return feedApi;
-    }
-
-    public Picasso getPicasso() {
-        return picasso;
-    }
-
-    public FeederApplicationComponent component() {
+    public BaseComponent component() {
         return feederApplicationComponent;
     }
 }

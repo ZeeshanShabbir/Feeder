@@ -1,4 +1,4 @@
-package io.droidninja.feeder.ui.activities;
+package io.droidninja.feeder.di.scopes;
 
 import javax.inject.Scope;
 

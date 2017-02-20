@@ -24,6 +24,9 @@ import io.droidninja.feeder.api.model.CatalogDTO;
 import io.droidninja.feeder.api.model.SourceDTO;
 import io.droidninja.feeder.api.networking.FeedApi;
 import io.droidninja.feeder.contentProvider.FeederContract;
+import io.droidninja.feeder.di.components.DaggerFeedsCatalogActivityComponent;
+import io.droidninja.feeder.di.components.FeedsCatalogActivityComponent;
+import io.droidninja.feeder.di.modules.FeedsCatalogActivityModule;
 import io.droidninja.feeder.ui.adapters.CatalogAdapter;
 import io.droidninja.feeder.ui.adapters.SelectedInterfaceListener;
 import io.droidninja.feeder.util.GridSpacingItemDecoration;
@@ -44,6 +47,7 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
     List<SourceDTO> selectedItems = new ArrayList<SourceDTO>();
 
     FeedsCatalogActivityComponent feedsCatalogActivityComponent;
+
     CatalogAdapter catalogAdapter;
 
     @Override
@@ -52,11 +56,13 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
         hideStatusBar();
         setContentView(R.layout.activity_feeds_catalog);
         ButterKnife.bind(this);
+
         feedsCatalogActivityComponent = DaggerFeedsCatalogActivityComponent.builder()
-                .feederApplicationComponent(FeederApplication.get(this).component())
-                .feedsCatalogActivityModule(new FeedsCatalogActivityModule(this)).build();
+                .baseComponent(FeederApplication.getsBaseComponent())
+                .feedsCatalogActivityModule(new FeedsCatalogActivityModule(this))
+                .build();
         initRc();
-        FeedApi feedApi = feedsCatalogActivityComponent.getFeedApi();
+        FeedApi feedApi = FeederApplication.getsBaseComponent().getFeedApi();
         Call<CatalogDTO> catalogs = feedApi.getSources();
         catalogs.enqueue(new Callback<CatalogDTO>() {
             @Override

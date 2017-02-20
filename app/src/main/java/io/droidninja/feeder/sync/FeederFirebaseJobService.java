@@ -1,6 +1,5 @@
 package io.droidninja.feeder.sync;
 
-import android.app.Service;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -21,8 +20,7 @@ public class FeederFirebaseJobService extends JobService {
             @Override
             protected Void doInBackground(Void... params) {
                 Context context = getApplicationContext();
-                //Here is problem
-                FeederSyncTask.syncArticles((Service) context);
+                FeederSyncTask.syncArticles(context);
                 return null;
             }
 
