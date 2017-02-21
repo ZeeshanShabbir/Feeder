@@ -78,10 +78,7 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
                 // TODO: 2/19/17 Handle case when this will fail
             }
         });
-
-
     }
-
     /**
      * initializes the RecyclerView
      */
@@ -117,7 +114,6 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
             btnNext.setVisibility(View.VISIBLE);
             btnNext.setText(items.size() + " items selected");
         }
-
     }
 
     @OnClick(R.id.btn_next)

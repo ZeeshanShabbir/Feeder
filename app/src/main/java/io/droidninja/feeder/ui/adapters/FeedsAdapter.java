@@ -1,5 +1,6 @@
 package io.droidninja.feeder.ui.adapters;
 
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,19 +12,17 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.droidninja.feeder.FeederApplication;
 import io.droidninja.feeder.R;
-import io.droidninja.feeder.api.model.FeedsDTO;
+import io.droidninja.feeder.ui.fragments.FeedsFragment;
 
 /**
  * Created by Zeeshan on 2/15/17.
  */
 
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
-    FeedsDTO feedsDTO;
+public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.ViewHolder> {
+    Cursor mCursor;
 
-    public FeedAdapter(FeedsDTO feedsDTO) {
-        this.feedsDTO = feedsDTO;
+    public FeedsAdapter() {
     }
 
     @Override
@@ -34,13 +33,32 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvTittle.setText(feedsDTO.getArticle().get(position).getTitle());
-        Picasso.with(holder.ivCover.getContext()).load(feedsDTO.getArticle().get(position).getUrlToImage()).into(holder.ivCover);
+        mCursor.moveToPosition(position);
+        String title = null;
+        String description = null;
+        String urlToImage = null;
+        try {
+            title = mCursor.getString(FeedsFragment.INDEX_ARITICLE_TITLE);
+            description = mCursor.getString(FeedsFragment.INDEX_ARTICLE_DESCRIPTION);
+            urlToImage = mCursor.getString(FeedsFragment.INDEX_ARTICLE_URL_TO_IMAGE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (title != null)
+            holder.tvTittle.setText(title);
+        if (urlToImage != null)
+            Picasso.with(holder.ivCover.getContext()).load(urlToImage).into(holder.ivCover);
     }
 
     @Override
     public int getItemCount() {
-        return feedsDTO.getArticle().size();
+        if (mCursor == null) return 0;
+        return mCursor.getCount();
+    }
+
+    public void swapCursor(Cursor newCursor) {
+        mCursor = newCursor;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
