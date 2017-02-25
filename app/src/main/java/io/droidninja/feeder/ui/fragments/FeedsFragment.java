@@ -1,6 +1,7 @@
 package io.droidninja.feeder.ui.fragments;
 
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +27,7 @@ import io.droidninja.feeder.ui.adapters.FeedsAdapter;
  * Created by Zeeshan on 2/12/17.
  */
 
-public class FeedsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FeedsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FeedListener {
     public static final int ID_FEEDS_LOADER = 232;
     public static final String[] MAIN_FEED_PROJECTION = {
             FeederContract.ArticleEntry.TITLE,
@@ -64,7 +66,7 @@ public class FeedsFragment extends Fragment implements LoaderManager.LoaderCallb
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rcFeeds.setLayoutManager(linearLayoutManager);
-        mFeedsAdapter = new FeedsAdapter();
+        mFeedsAdapter = new FeedsAdapter(this);
         rcFeeds.setAdapter(mFeedsAdapter);
     }
 
@@ -87,5 +89,26 @@ public class FeedsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mFeedsAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void openFeed(String title, String description, String urlToImage, String url, ImageView cover, String transitionName) {
+        FeedFragment feedFragment = FeedFragment.newInstance(title, description, url, urlToImage, transitionName);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //ImageView ivCover = (ImageView) getActivity().findViewById(R.id.iv_cover);
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(android.R.id.content, feedFragment, "Feed")
+                    .addSharedElement(cover, transitionName)
+                    .addToBackStack("Feed")
+                    .commit();
+        } else {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(android.R.id.content, feedFragment, "Feed")
+                    .addToBackStack("Feed")
+                    .commit();
+        }
     }
 }
