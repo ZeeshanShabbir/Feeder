@@ -3,6 +3,7 @@ package io.droidninja.feeder.ui.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import io.droidninja.feeder.FeederApplication;
 import io.droidninja.feeder.ui.fragments.FeedsFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,5 +17,18 @@ public class MainActivity extends AppCompatActivity {
                     .replace(android.R.id.content, new FeedsFragment(), this.toString())
                     .commit();
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        FeederApplication.activityPaused();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FeederApplication.activityResumed();
     }
 }

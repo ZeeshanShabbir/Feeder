@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Feeder</string>
     <string name="catalog_saved">user has selected the catalogs</string>
+    <string name="banner_ad_unit_id">ca-app-pub-8743474619938776/3064935649</string>
+    <string name="video_ad_unit_id">ca-app-pub-8743474619938776/1895926843</string>
+
+
 </resources>

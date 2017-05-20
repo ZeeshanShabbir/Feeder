@@ -22,7 +22,7 @@ import io.droidninja.feeder.contentProvider.FeederContract;
 
 public class FeederSyncUtil {
     private static final String TAG = "FeederSyncUtil";
-    private static final int SYNC_INTERVAL_HOURS = 3;
+    private static final int SYNC_INTERVAL_HOURS = 2;
     private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
     private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 3;
 
@@ -50,7 +50,6 @@ public class FeederSyncUtil {
             }
         });
         checkForEmpty.start();
-
     }
 
     public static void startSync(final Context context) {
@@ -58,7 +57,7 @@ public class FeederSyncUtil {
         context.startService(intent);
     }
 
-    static void scheduleFirebaseJobDispatcherSync(Context context) {
+    private static void scheduleFirebaseJobDispatcherSync(Context context) {
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher firebaseJobDispatcher = new FirebaseJobDispatcher(driver);
 

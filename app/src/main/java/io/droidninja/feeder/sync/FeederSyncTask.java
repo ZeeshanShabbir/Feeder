@@ -1,14 +1,20 @@
 package io.droidninja.feeder.sync;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import io.droidninja.feeder.FeederApplication;
+import io.droidninja.feeder.R;
 import io.droidninja.feeder.api.model.FeedsDTO;
 import io.droidninja.feeder.api.networking.FeedApi;
 import io.droidninja.feeder.contentProvider.FeederContract;
+import io.droidninja.feeder.ui.activities.MainActivity;
 import io.droidninja.feeder.util.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,8 +26,9 @@ import retrofit2.Response;
 
 public class FeederSyncTask {
     private static final String TAG = "FeederSyncTask";
+    private static int rowss = 0;
 
-    public static void syncArticles(final Context context) {
+    public synchronized static void syncArticles(final Context context) {
         String[] selections = {FeederContract.SourceEntry._ID, FeederContract.SourceEntry.IDENTIFIER};
 
         Cursor cursor = context.getContentResolver().query(
@@ -44,7 +51,7 @@ public class FeederSyncTask {
                         @Override
                         public void onResponse(Call<FeedsDTO> call, Response<FeedsDTO> response) {
                             Log.d(TAG, response.message());
-                            //TODO: 2/19/17 Add feeds to db
+                            //Completed: 2/19/17 Add feeds to db
                             ContentValues[] values = new ContentValues[response.body().getArticle().size()];
                             for (int i = 0; i < response.body().getArticle().size(); i++) {
                                 ContentValues contentValue = new ContentValues();
@@ -63,9 +70,7 @@ public class FeederSyncTask {
                                 contentValue.put(FeederContract.ArticleEntry.SOURCE, data);
                                 values[i] = contentValue;
                             }
-                            int rows = context.getContentResolver().bulkInsert(FeederContract.ArticleEntry.CONTENT_URI, values);
-                            Log.d(TAG, rows + "");
-                            Log.d(TAG, data);
+                            rowss = rowss + context.getContentResolver().bulkInsert(FeederContract.ArticleEntry.CONTENT_URI, values);
                         }
 
                         @Override
@@ -79,5 +84,30 @@ public class FeederSyncTask {
             }
         }
         cursor.close();
+
+        if (!FeederApplication.isActivityVisible()) {
+            try {
+                Thread.sleep(10000);
+                if (rowss > 0) {
+                    NotificationCompat.Builder builder =
+                            new NotificationCompat.Builder(context)
+                                    .setSmallIcon(R.drawable.ic_stat_fiber_new)
+                                    .setContentTitle("Your Feeds are ready")
+                                    .setAutoCancel(true)
+                                    .setContentText("You have " + rowss + " new feeds to read");
+
+                    int NOTIFICATION_ID = 12345;
+                    Intent targetIntent = new Intent(context, MainActivity.class);
+                    PendingIntent contentIntent = PendingIntent.getActivity(context,
+                            0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    builder.setContentIntent(contentIntent);
+                    NotificationManager nManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    nManager.notify(NOTIFICATION_ID, builder.build());
+                    rowss = 0;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

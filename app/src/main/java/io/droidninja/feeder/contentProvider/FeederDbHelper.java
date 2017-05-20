@@ -28,8 +28,8 @@ public class FeederDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_ARTICLE_TABLE = "CREATE TABLE " + ArticleEntry.TABLE_NAME + " (" +
                 ArticleEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ArticleEntry.AUTHOR + " TEXT , " +
-                ArticleEntry.TITLE + " TEXT NOT NULL, " +
-                ArticleEntry.DESCRIPTION + " TEXT NOT NULL, " +
+                ArticleEntry.TITLE + " TEXT UNIQUE NOT NULL, " +
+                ArticleEntry.DESCRIPTION + " TEXT, " +
                 ArticleEntry.PUBLISH_AT + " TEXT, " +
                 ArticleEntry.URL + " TEXT NOT NULL, " +
                 ArticleEntry.URL_TO_IMAGE + " TEXT, " +

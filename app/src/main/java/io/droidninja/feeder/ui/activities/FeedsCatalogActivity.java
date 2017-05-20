@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.droidninja.feeder.FeederApplication;
 import io.droidninja.feeder.R;
 import io.droidninja.feeder.api.model.CatalogDTO;
@@ -30,6 +33,7 @@ import io.droidninja.feeder.di.modules.FeedsCatalogActivityModule;
 import io.droidninja.feeder.ui.adapters.CatalogAdapter;
 import io.droidninja.feeder.ui.adapters.SelectedInterfaceListener;
 import io.droidninja.feeder.util.GridSpacingItemDecoration;
+import io.droidninja.feeder.util.Helper;
 import io.droidninja.feeder.util.SharedPrefsUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +48,11 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
     @BindView(R.id.btn_next)
     Button btnNext;
 
+    @BindView(R.id.pb)
+    SmoothProgressBar smoothProgressBar;
+    @BindView(R.id.tv_error_text)
+    TextView tvErrorView;
+
     List<SourceDTO> selectedItems = new ArrayList<SourceDTO>();
 
     FeedsCatalogActivityComponent feedsCatalogActivityComponent;
@@ -57,6 +66,8 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
         setContentView(R.layout.activity_feeds_catalog);
         ButterKnife.bind(this);
 
+        smoothProgressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
         feedsCatalogActivityComponent = DaggerFeedsCatalogActivityComponent.builder()
                 .baseComponent(FeederApplication.getsBaseComponent())
                 .feedsCatalogActivityModule(new FeedsCatalogActivityModule(this))
@@ -68,6 +79,8 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
             @Override
             public void onResponse(Call<CatalogDTO> call, Response<CatalogDTO> response) {
                 Log.d(TAG, response.message());
+                smoothProgressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
                 if (response.isSuccessful()) {
                     catalogAdapter.swap(response.body().getSources());
                 }
@@ -76,23 +89,36 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
             @Override
             public void onFailure(Call<CatalogDTO> call, Throwable t) {
                 // TODO: 2/19/17 Handle case when this will fail
+                recyclerView.setVisibility(View.GONE);
+                tvErrorView.setVisibility(View.VISIBLE);
+                smoothProgressBar.setVisibility(View.GONE);
             }
         });
     }
+
     /**
      * initializes the RecyclerView
      */
     private void initRc() {
-        GridLayoutManager manager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager manager;
+        if (Helper.isTablet(this)) {
+            Log.d(TAG, "yes");
+            manager = new GridLayoutManager(this, 10, GridLayoutManager.VERTICAL, false);
+
+        } else {
+            manager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+
+        }
         recyclerView.setLayoutManager(manager);
         catalogAdapter = feedsCatalogActivityComponent.getCatalogAdapter();
         recyclerView.setAdapter(catalogAdapter);
 
         //Adding margin and padding to Grid layout
-        int spanCount = 3; // 3 columns
-        int spacing = 20; // 50px
+        int spanCount = 10; // 3 columns
+        int spacing = 10; // 50px
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, true));
     }
+
 
     private void hideStatusBar() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -129,10 +155,10 @@ public class FeedsCatalogActivity extends AppCompatActivity implements SelectedI
             value.put(FeederContract.SourceEntry.NAME, name);
             contentValues[i] = value;
         }
-
         int rows = getContentResolver().bulkInsert(FeederContract.SourceEntry.CONTENT_URI, contentValues);
         Log.d(TAG, rows + " rows have been added");
         SharedPrefsUtils.setBooleanPreference(this, getString(R.string.catalog_saved), true);
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }

@@ -56,6 +56,7 @@ public class FeederContentProvider extends ContentProvider {
                         sortOrder);
                 break;
             case CODE_VIEW_ARTICLE:
+
                 cursor = feederDbHelper.getReadableDatabase().query(FeederContract.ArticleEntry.TABLE_NAME,
                         projection,
                         selection,
@@ -68,6 +69,7 @@ public class FeederContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri " + uri);
         }
+        cursor.setNotificationUri(getContext().getContentResolver(),uri);
         return cursor;
     }
 
@@ -152,18 +154,18 @@ public class FeederContentProvider extends ContentProvider {
     /**
      * generic method use to insert record to any table
      *
-     * @param tabbleName
+     * @param tableName
      * @param db
      * @param values
      * @param uri
      * @return
      */
-    public int insertRecords(String tabbleName, SQLiteDatabase db, ContentValues[] values, Uri uri) {
+    public int insertRecords(String tableName, SQLiteDatabase db, ContentValues[] values, Uri uri) {
         db.beginTransaction();
         int rowsInserted = 0;
         try {
             for (ContentValues value : values) {
-                long _id = db.insertWithOnConflict(tabbleName, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                long _id = db.insertWithOnConflict(tableName, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 if (_id != -1) {
                     rowsInserted++;
                 }

@@ -2,6 +2,8 @@ package io.droidninja.feeder;
 
 import android.app.Application;
 
+import com.google.android.gms.ads.MobileAds;
+
 import io.droidninja.feeder.di.components.ApplicationComponent;
 import io.droidninja.feeder.di.components.BaseComponent;
 import io.droidninja.feeder.di.components.DaggerApplicationComponent;
@@ -19,6 +21,8 @@ public class FeederApplication extends Application {
     private static BaseComponent sBaseComponent;
     BaseComponent feederApplicationComponent;
 
+    private static boolean activityVisible;
+
     public static BaseComponent getsBaseComponent() {
         return sBaseComponent;
     }
@@ -26,7 +30,7 @@ public class FeederApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-8743474619938776~1588202444");
         ApplicationComponent applicationComponent = DaggerApplicationComponent
                 .builder()
                 .applicationModule(new ApplicationModule(this))
@@ -41,5 +45,17 @@ public class FeederApplication extends Application {
 
     public BaseComponent component() {
         return feederApplicationComponent;
+    }
+
+    public static boolean isActivityVisible() {
+        return activityVisible;
+    }
+
+    public static void activityResumed() {
+        activityVisible = true;
+    }
+
+    public static void activityPaused() {
+        activityVisible = false;
     }
 }

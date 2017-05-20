@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_feeds_catalog"
     android:layout_width="match_parent"
@@ -24,7 +25,34 @@
         android:id="@+id/rc_catalog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <TextView
+        android:visibility="gone"
+        android:layout_margin="10dp"
+        android:id="@+id/tv_error_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:text="Something went wrong please check your internet connection" />
+
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/pb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="visible"
+        app:spb_color="@color/colorPrimary"
+        app:spb_mirror_mode="false"
+        app:spb_progressiveStart_activated="true"
+        app:spb_progressiveStart_speed="1.5"
+        app:spb_progressiveStop_speed="3.4"
+        app:spb_reversed="false"
+        app:spb_sections_count="4"
+        app:spb_speed="2.0"
+        app:spb_stroke_separator_length="4dp"
+        app:spb_stroke_width="4dp" />
 
     <Button
         android:id="@+id/btn_next"
@@ -32,8 +60,8 @@
         android:layout_height="wrap_content"
         android:background="#32c24d"
         android:drawableRight="@drawable/ic_chevron_right"
-        android:paddingRight="10dp"
         android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:textColor="#fff"
         android:visibility="gone" />
 </LinearLayout>
